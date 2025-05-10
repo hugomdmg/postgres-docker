@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "clear-docker": "docker system prune -a --volumes",
+        "start": "docker-compose up",
+        "enter": "docker exec -it sql-postgres-1 psql -U myuser -d mydb"
+    }
+}
