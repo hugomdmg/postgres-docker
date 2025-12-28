@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS dive_centers (
 
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
-    dive_center_id INT REFERENCES dive_centers(dive_center_id),
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -37,6 +36,19 @@ CREATE TABLE IF NOT EXISTS form_types (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- ================================
+-- Insertar un tipo de formulario por defecto
+-- ================================
+
+INSERT INTO form_types (name)
+VALUES 
+('Medical Diving Questionnaire'),
+('Personal Data'),
+('Safe agreement'),
+('Rental contract'),
+('Risk agreement');
+
+
 CREATE TABLE IF NOT EXISTS client_forms (
     client_id INT NOT NULL REFERENCES clients(client_id),
     form_type_id INT NOT NULL REFERENCES form_types(form_type_id),
@@ -46,22 +58,22 @@ CREATE TABLE IF NOT EXISTS client_forms (
 );
 
 -- ================================
--- Tablas para cuestionario médico
+-- Tablas para cuestionario
 -- ================================
 
-CREATE TABLE IF NOT EXISTS medical_questions (
+CREATE TABLE IF NOT EXISTS form_questions (
     question_id SERIAL PRIMARY KEY,
     form_type_id INT NOT NULL REFERENCES form_types(form_type_id),
     code TEXT NOT NULL,
     text TEXT NOT NULL,
-    parent_question_id INT REFERENCES medical_questions(question_id),
+    parent_question_id INT REFERENCES form_questions(question_id),
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS medical_answers (
+CREATE TABLE IF NOT EXISTS form_answers (
     answer_id SERIAL PRIMARY KEY,
     client_id INT NOT NULL REFERENCES clients(client_id),
-    question_id INT NOT NULL REFERENCES medical_questions(question_id),
+    question_id INT NOT NULL REFERENCES form_questions(question_id),
     answer_boolean BOOLEAN,
     answer_text TEXT,
     answered_at TIMESTAMP DEFAULT NOW(),
@@ -72,19 +84,14 @@ CREATE TABLE IF NOT EXISTS medical_answers (
     )
 );
 
--- ================================
--- Insertar un tipo de formulario por defecto
--- ================================
 
-INSERT INTO form_types (name)
-VALUES ('Medical Diving Questionnaire');
-
-
-
-
+-- ==================================
+-- Formulario: Cuestionario medico
+-- form_type_id = 1
+-- ==================================
 
 -- Preguntas principales
-INSERT INTO medical_questions (form_type_id, code, text)
+INSERT INTO form_questions (form_type_id, code, text)
 VALUES
 (1, 'question1', '1. I have had problems with my lungs, breathing, heart and/or blood affecting my normal physical or mental performance.'),
 (1, 'question2', '2. I am over 45 years of age.'),
@@ -98,7 +105,7 @@ VALUES
 (1, 'question10', '10. I am taking prescription medications (with the exception of birth control or anti-malarial drugs other than mefloquine (Lariam).');
 
 -- Subpreguntas de question1
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question1_1', 'Chest surgery, heart surgery, heart valve surgery, an implantable medical device (eg, stent, pacemaker, neurostimulator), pneumothorax, and/or chronic lung disease.', 1),
 (1, 'question1_2', 'Asthma, wheezing, severe allergies, hay fever or congested airways within the last 12 months that limits my physical activity/exercise.', 1),
@@ -107,7 +114,7 @@ VALUES
 (1, 'question1_5', 'A diagnosis of COVID-19.', 1);
 
 -- Subpreguntas de question2
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question2_1', 'I currently smoke or inhale nicotine by other means.', 2),
 (1, 'question2_2', 'I have a high cholesterol level.', 2),
@@ -115,7 +122,7 @@ VALUES
 (1, 'question2_4', 'I have had a close blood relative die suddenly or of cardiac disease or stroke before the age of 50, OR have a family history of heart disease before age 50 (including abnormal heart rhythms, coronary artery disease or cardiomyopathy).', 2);
 
 -- Subpreguntas de question4
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question4_1', 'Sinus surgery within the last 6 months.', 4),
 (1, 'question4_2', 'Ear disease or ear surgery, hearing loss, or problems with balance.', 4),
@@ -123,7 +130,7 @@ VALUES
 (1, 'question4_4', 'Eye surgery within the past 3 months', 4);
 
 -- Subpreguntas de question6
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question6_1', 'Head injury with loss of consciousness within the past 5 years', 6),
 (1, 'question6_2', 'Persistent neurologic injury or disease', 6),
@@ -132,7 +139,7 @@ VALUES
 (1, 'question6_5', 'Epilepsy, seizures, or convulsions, OR take medications to prevent them.', 6);
 
 -- Subpreguntas de question7
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question7_1', 'Behavioral health, mental or psychological problems requiring medical/psychiatric treatment', 7),
 (1, 'question7_2', 'Major depression, suicidal ideation, panic attacks, uncontrolled bipolar disorder requiring medication/psychiatric treatment.', 7),
@@ -140,7 +147,7 @@ VALUES
 (1, 'question7_4', 'An addiction to drugs or alcohol requiring treatment within the last 5 years.', 7);
 
 -- Subpreguntas de question8
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question8_1', 'Recurrent back problems in the last 6 months that limit my everyday activity', 8),
 (1, 'question8_2', 'Back or spinal surgery within the last 12 months', 8),
@@ -149,7 +156,7 @@ VALUES
 (1, 'question8_5', 'Active or untreated ulcers, problem wounds, or ulcer surgery within the last 6 months', 8);
 
 -- Subpreguntas de question9
-INSERT INTO medical_questions (form_type_id, code, text, parent_question_id)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id)
 VALUES
 (1, 'question9_1', 'Ostomy surgery and do not have medical clearance to swim or engage in physical activity.', 9),
 (1, 'question9_2', 'Dehydration requiring medical intervention within the last 7 days.', 9),
@@ -157,3 +164,42 @@ VALUES
 (1, 'question9_4', 'Frequent heartburn, regurgitation, or gastroesophageal reflux disease (GERD).', 9),
 (1, 'question9_5', 'Active or uncontrolled ulcerative colitis or Crohn’s disease.', 9),
 (1, 'question9_6', 'Bariatric surgery within the last 12 months', 9);
+
+
+-- ===============================
+-- Formulario: Personal Data Form
+-- form_type_id = 2
+-- ===============================
+
+-- Preguntas principales
+INSERT INTO form_questions (form_type_id, code, text)
+VALUES
+(2, 'email', 'Email'),
+(2, 'name', 'Name'),
+(2, 'last_name', 'Last name'),
+(2, 'birthday', 'Birthday'),
+(2, 'street', 'Street'),
+(2, 'postal', 'ZIP/postal code'),
+(2, 'country', 'Country of residence'),
+(2, 'city', 'City'),
+(2, 'phone', 'Phone number'),
+(2, 'gender', 'Gender'), -- ======================
+(2, 'certificationLevel', 'Certification level'), -- =======================
+(2, 'padi_number', 'PADI number (if certified)'),
+(2, 'numberOfDives', 'Number of dives'),
+(2, 'dateOfLastDive', 'Date of last dive'),
+(2, 'needRefresher', 'Do you need a refresher?'),
+(2, 'haveInsurance', 'Do you have a diving insurance?'), -- =======================
+(2, 'insuranceNumber', 'Insurance number'),
+(2, 'insuranceCompany', 'Insurance Company'),
+(2, 'needEquipment', 'Do you need to rent a diving Equipment?'), -- =======================
+(2, 'bootsSize', 'Boots size (EU size)'),
+(2, 'bcdSize', 'BCD size'),
+(2, 'wetsuitSize', 'Wetsuit size'),
+(2, 'wantPhotosVideos', 'Do you want underwater pictures and videos?'),
+(2, 'preferredDiveDate', 'Preferred date of your dives'),
+(2, 'stayDuration', 'How long are you staying on the island?'),
+(2, 'departureDate', 'Departure Date'),
+(2, 'promotionsEmail', 'Do you want us to email you with special promotions?'),
+(2, 'consentSocialMedia', 'Do you give us consent to post you on social media?'),
+(2, 'howDidYouKnow', 'How did you know about us?'); -- ===========================
