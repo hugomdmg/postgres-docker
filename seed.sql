@@ -87,7 +87,6 @@ CREATE TABLE IF NOT EXISTS form_answers (
 CREATE TABLE user_google_tokens (
     user_id INT PRIMARY KEY,
     refresh_token TEXT NOT NULL,
-    email TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
