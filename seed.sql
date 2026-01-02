@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS clients (
     client_id SERIAL PRIMARY KEY,
     dive_center_id INT NOT NULL REFERENCES dive_centers(dive_center_id),
     full_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100)
+    email VARCHAR(100),
+    CONSTRAINT clients_fullname_divecenter_unique
+        UNIQUE (full_name, dive_center_id)
 );
 
 CREATE TABLE IF NOT EXISTS form_types (
