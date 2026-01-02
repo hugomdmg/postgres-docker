@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS user_dive_centers (
 CREATE TABLE IF NOT EXISTS clients (
     client_id SERIAL PRIMARY KEY,
     dive_center_id INT NOT NULL REFERENCES dive_centers(dive_center_id),
-    name VARCHAR(50) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
+    full_name VARCHAR(50) NOT NULL,
     email VARCHAR(100)
 );
 
