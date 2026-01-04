@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS form_answers (
 CREATE TABLE IF NOT EXISTS completed_forms (
     form_id INT NOT NULL REFERENCES form_types(form_type_id),
     client_id INT NOT NULL REFERENCES clients(client_id)
-)
+);
 
 CREATE TABLE user_google_tokens (
     user_id INT PRIMARY KEY,
