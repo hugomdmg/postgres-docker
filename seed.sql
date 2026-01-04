@@ -41,13 +41,13 @@ CREATE TABLE IF NOT EXISTS form_types (
 -- Insertar un tipo de formulario por defecto
 -- ================================
 
-INSERT INTO form_types (name)
-VALUES 
-('Medical Diving Questionnaire'),
-('Personal Data'),
-('Safe agreement'),
-('Rental contract'),
-('Risk agreement');
+-- INSERT INTO form_types (name)
+-- VALUES 
+-- ('Medical Diving Questionnaire'),
+-- ('Personal Data'),
+-- ('Safe agreement'),
+-- ('Rental contract'),
+-- ('Risk agreement');
 
 
 CREATE TABLE IF NOT EXISTS client_forms (
@@ -75,15 +75,16 @@ CREATE TABLE IF NOT EXISTS form_answers (
     answer_id SERIAL PRIMARY KEY,
     client_id INT NOT NULL REFERENCES clients(client_id),
     question_id INT NOT NULL REFERENCES form_questions(question_id),
-    answer_boolean BOOLEAN,
-    answer_text TEXT,
+    form_type_id INT NOT NULL,
+    answer jsonb NOT NULL,
     answered_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE (client_id, question_id),
-    CHECK (
-        (answer_boolean IS NOT NULL AND answer_text IS NULL)
-     OR (answer_boolean IS NULL AND answer_text IS NOT NULL)
-    )
+    UNIQUE (client_id, question_id)
 );
+
+CREATE TABLE IF NOT EXISTS completed_forms (
+    form_id INT NOT NULL REFERENCES form_types(form_type_id),
+    client_id INT NOT NULL REFERENCES clients(client_id)
+)
 
 CREATE TABLE user_google_tokens (
     user_id INT PRIMARY KEY,
@@ -172,7 +173,6 @@ VALUES
 (1, 'question9_5', 'Active or uncontrolled ulcerative colitis or Crohn’s disease.', 9),
 (1, 'question9_6', 'Bariatric surgery within the last 12 months', 9);
 
-
 -- ===============================
 -- Formulario: Personal Data Form
 -- form_type_id = 2
@@ -197,12 +197,12 @@ VALUES
 (2, 'dateOfLastDive', 'Date of last dive'),
 (2, 'needRefresher', 'Do you need a refresher?'),
 (2, 'haveInsurance', 'Do you have a diving insurance?'), -- =======================
-(2, 'insuranceNumber', 'Insurance number'),
-(2, 'insuranceCompany', 'Insurance Company'),
+-- (2, 'insuranceNumber', 'Insurance number'),
+-- (2, 'insuranceCompany', 'Insurance Company'),
 (2, 'needEquipment', 'Do you need to rent a diving Equipment?'), -- =======================
-(2, 'bootsSize', 'Boots size (EU size)'),
-(2, 'bcdSize', 'BCD size'),
-(2, 'wetsuitSize', 'Wetsuit size'),
+-- (2, 'bootsSize', 'Boots size (EU size)'),
+-- (2, 'bcdSize', 'BCD size'),
+-- (2, 'wetsuitSize', 'Wetsuit size'),
 (2, 'wantPhotosVideos', 'Do you want underwater pictures and videos?'),
 (2, 'preferredDiveDate', 'Preferred date of your dives'),
 (2, 'stayDuration', 'How long are you staying on the island?'),
@@ -210,3 +210,61 @@ VALUES
 (2, 'promotionsEmail', 'Do you want us to email you with special promotions?'),
 (2, 'consentSocialMedia', 'Do you give us consent to post you on social media?'),
 (2, 'howDidYouKnow', 'How did you know about us?'); -- ===========================
+
+-- gender (question_id = 53)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'male', 'Male', 53),
+(2, 'female', 'Female', 53),
+(2, 'not_say', 'Prefer not to say', 53);
+
+-- certificationLevel (question_id = 54)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'certificationOptions.scubaDiver', 'Scuba Diver', 54),
+(2, 'certificationOptions.openWaterDiver', 'Open Water Diver', 54),
+(2, 'certificationOptions.advancedOpenWaterDiver', 'Advanced Open Water Diver', 54),
+(2, 'certificationOptions.rescueDiver', 'Rescue Diver', 54),
+(2, 'certificationOptions.masterDiver', 'Master Diver', 54),
+(2, 'certificationOptions.diverMasterInstructor', 'Diver Master Instructor', 54),
+(2, 'certificationOptions.notCertified', 'Not Certified', 54);
+
+-- needRefresher (question_id = 58) → yes/no
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'yes', 'Yes', 58),
+(2, 'no', 'No', 58);
+
+-- haveInsurance (question_id = 59) → yes/no + subquestions
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'insuranceNumber', 'Insurance Number', 59),
+(2, 'insuranceCompany', 'Insurance Company', 59);
+
+-- needEquipment (question_id = 60) → yes/no + subquestions
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'bootsSize', 'Boots Size', 60),
+(2, 'bcdSize', 'BCD Size', 60),
+(2, 'wetsuitSize', 'Wetsuit Size', 60);
+
+-- wantPhotosVideos (question_id = 63) → yes/no
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'yes', 'Yes', 61),
+(2, 'no', 'No', 61);
+
+-- promotionsEmail (question_id = 64) → yes/no
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'yes', 'Yes', 65),
+(2, 'no', 'No', 65);
+
+-- consentSocialMedia (question_id = 66) → yes/no
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'yes', 'Yes', 66),
+(2, 'no', 'No', 66);
+
+-- howDidYouKnow (question_id = 65)
+INSERT INTO form_questions (form_type_id, code, text, parent_question_id) VALUES
+(2, 'referralOptions.website', 'Website', 67),
+(2, 'referralOptions.socialMedia', 'Social Media', 67),
+(2, 'referralOptions.bookingAgent', 'Booking Agent', 67),
+(2, 'referralOptions.friend', 'Friend', 67),
+(2, 'referralOptions.other', 'Other', 67);
+
+
+
