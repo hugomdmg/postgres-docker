@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS activities (
 
 
 CREATE TABLE IF NOT EXISTS activities_calendar (
+    activity_calendar_id SERIAL PRIMARY KEY,
     client_id INT NOT NULL REFERENCES clients(client_id),
     date TEXT NOT NULL,
     activity_id INT NOT NULL REFERENCES activities(activity_id)
