@@ -86,16 +86,26 @@ CREATE TABLE IF NOT EXISTS completed_forms (
     client_id INT NOT NULL REFERENCES clients(client_id)
 );
 
-CREATE TABLE user_google_tokens (
+CREATE TABLE IF NOT EXISTS user_google_tokens (
     user_id INT PRIMARY KEY,
     refresh_token TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE activities_calendar (
-    user_id INT NOT NULL REFERENCES clients(client_id),
+
+CREATE TABLE IF NOT EXISTS activities (
+    activity_id SERIAL PRIMARY KEY,
+    dive_center_id INT NOT NULL REFERENCES dive_centers(dive_center_id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    price NUMERIC(10,2),
+    color CHAR(7)
+);
+
+
+CREATE TABLE IF NOT EXISTS activities_calendar (
+    client_id INT NOT NULL REFERENCES clients(client_id),
     date TEXT NOT NULL,
-    activity TEXT NOT NULL
+    activity_id INT NOT NULL REFERENCES activities(activity_id)
 );
 
 -- ==================================
