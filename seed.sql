@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS user_dive_centers (
     PRIMARY KEY (user_id, dive_center_id)
 );
 
+
 CREATE TABLE IF NOT EXISTS clients (
     client_id SERIAL PRIMARY KEY,
     dive_center_id INT NOT NULL REFERENCES dive_centers(dive_center_id),
@@ -51,7 +52,7 @@ VALUES
 
 
 CREATE TABLE IF NOT EXISTS client_forms (
-    client_id INT NOT NULL REFERENCES clients(client_id),
+    client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
     form_type_id INT NOT NULL REFERENCES form_types(form_type_id),
     completed BOOLEAN DEFAULT FALSE,
     completed_at TIMESTAMP,
@@ -73,7 +74,7 @@ CREATE TABLE IF NOT EXISTS form_questions (
 
 CREATE TABLE IF NOT EXISTS form_answers (
     answer_id SERIAL PRIMARY KEY,
-    client_id INT NOT NULL REFERENCES clients(client_id),
+    client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
     question_id INT NOT NULL REFERENCES form_questions(question_id),
     form_type_id INT NOT NULL,
     answer jsonb NOT NULL,
@@ -83,11 +84,11 @@ CREATE TABLE IF NOT EXISTS form_answers (
 
 CREATE TABLE IF NOT EXISTS completed_forms (
     form_id INT NOT NULL REFERENCES form_types(form_type_id),
-    client_id INT NOT NULL REFERENCES clients(client_id)
+    client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_google_tokens (
-    user_id INT PRIMARY KEY,
+    user_id INT PRIMARY KEY REFERENCES users(user_id) ON DELETE CASCADE,
     refresh_token TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -102,11 +103,13 @@ CREATE TABLE IF NOT EXISTS activities (
 );
 
 
+
 CREATE TABLE IF NOT EXISTS activities_calendar (
     activity_calendar_id SERIAL PRIMARY KEY,
-    client_id INT NOT NULL REFERENCES clients(client_id),
+    client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
     date TEXT NOT NULL,
-    activity_id INT NOT NULL REFERENCES activities(activity_id)
+    activity_id INT NOT NULL REFERENCES activities(activity_id),
+    time TEXT NOT NULL
 );
 
 -- ==================================
