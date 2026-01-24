@@ -103,14 +103,33 @@ CREATE TABLE IF NOT EXISTS activities (
 );
 
 
+-- Tabla de pagadores
+CREATE TABLE IF NOT EXISTS payers (
+    payer_id SERIAL PRIMARY KEY,
+    dive_center_id INT NOT NULL REFERENCES dive_centers(dive_center_id) ON DELETE CASCADE,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
+
 
 CREATE TABLE IF NOT EXISTS activities_calendar (
     activity_calendar_id SERIAL PRIMARY KEY,
     client_id INT NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
     date TEXT NOT NULL,
     activity_id INT NOT NULL REFERENCES activities(activity_id),
-    time TEXT NOT NULL
+    time TEXT NOT NULL,
+    payment FLOAT NOT NULL,
+    payer_id INT NOT NULL REFERENCES payers(payer_id)
 );
+
+
+-- Pagos realizados
+CREATE TABLE IF NOT EXISTS done_payments (
+    done_payment_id SERIAL PRIMARY KEY,
+    payer_id INT NOT NULL REFERENCES payers(payer_id) ON DELETE CASCADE,
+    quantity FLOAT NOT NULL
+);
+
 
 -- ==================================
 -- Formulario: Cuestionario medico
