@@ -124,11 +124,15 @@ CREATE TABLE IF NOT EXISTS activities_calendar (
 
 
 -- Pagos realizados
-CREATE TABLE IF NOT EXISTS done_payments (
+
+CREATE TABLE done_payments (
     done_payment_id SERIAL PRIMARY KEY,
+    activity_calendar_id INT NOT NULL REFERENCES activities_calendar(activity_calendar_id) ON DELETE CASCADE,
     payer_id INT NOT NULL REFERENCES payers(payer_id) ON DELETE CASCADE,
-    quantity FLOAT NOT NULL
+    quantity FLOAT NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 -- ==================================
