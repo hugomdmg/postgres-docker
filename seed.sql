@@ -134,6 +134,17 @@ CREATE TABLE done_payments (
 );
 
 
+CREATE TABLE public_form_tokens (
+  token UUID PRIMARY KEY,
+  dive_center_id INT NOT NULL REFERENCES dive_centers(dive_center_id) ON DELETE CASCADE,
+  created_by_user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
+  expires_at TIMESTAMP,
+  active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
 
 -- ==================================
 -- Formulario: Cuestionario medico
